@@ -1,6 +1,6 @@
-# Nuxt 3 Minimal Starter
+# Single Product Page with Image Zoom feature In NuxtJS
 
-Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+The Single Product page with Image Zoom feature which enhances the user experience on an E-commerce website by allowing customers to interact with product images and videos is inspired from Amazon ecommerce website. This feature is designed to work seamlessly across different screen sizes and devices.
 
 ## Setup
 
