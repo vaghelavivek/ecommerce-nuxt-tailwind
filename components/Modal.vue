@@ -15,6 +15,15 @@ const props = defineProps(
 
 const activeTab = ref(props.type)
 const currentIndex = ref(props.index);
+const dblTapImageZoom = ref(true);
+
+watch(() => props.index , (newVal) => {
+    currentIndex.value = newVal
+} )
+
+watch(() => props.type , (newVal) => {
+    activeTab.value = newVal
+} )
 
 const firstVideoIndex = () => {
     activeTab.value = 0
@@ -92,17 +101,27 @@ const resetZoom = () => {
 
 const resetMobileZoom = () => {
     imgMobile.value.style.transform = "none";
-} 
+}
+
+const dblClickImageZoom = (event) => {
+
+    dblTapImageZoom.value = ! dblTapImageZoom.value
+    
+    if (dblTapImageZoom.value) {
+        isMouseClickOnImageMobile.value ? resetMobileZoom() : zoomMobileImg(event)
+        isMouseClickOnImageMobile.value = !isMouseClickOnImageMobile.value
+    }
+}
 </script>
 
 <template>
     <div class="fixed z-[1] w-full h-full overflow-auto bg-[rgba(0,0,0,0.4)] xl:py-[50px] p-4 left-0 top-0"
-        @click.self="$emit('closeModel') , isMouseClickOnImage = false , isMouseClickOnImageMobile = false">
+        @click.self="$emit('closeModel'), isMouseClickOnImage = false, isMouseClickOnImageMobile = false">
 
         <!-- Modal content -->
         <div class="container mx-auto bg-white xl:overflow-hidden overflow-auto rounded min-h-full h-full relative py-3">
             <div class="h-fit w-fit top-0 right-2 cursor-pointer font-bold absolute xl:block hidden"
-                @click="$emit('closeModel'), isMouseClickOnImage = false , isMouseClickOnImageMobile = false">
+                @click="$emit('closeModel'), isMouseClickOnImage = false, isMouseClickOnImageMobile = false">
                 &#x2715
             </div>
 
@@ -126,7 +145,7 @@ const resetMobileZoom = () => {
                         <img :src="details.thumbnails[currentIndex].img" ref="img"
                             v-if="details.thumbnails[currentIndex].img && details.thumbnails[currentIndex] && activeTab == 1"
                             class="mx-auto h-full" alt="thumb.img">
-                        <video class="h-full w-full p-2" controls
+                        <video class="h-full w-full p-2" controls autoplay
                             v-else-if="details.thumbnails[currentIndex].video && details.thumbnails[currentIndex] && activeTab == 0">
                             <source :src="details.thumbnails[currentIndex].video" type="video/mp4">
                         </video>
@@ -170,38 +189,38 @@ const resetMobileZoom = () => {
             <!-- mobile model -->
             <div class="h-full flex flex-col xl:hidden min-h-fit">
                 <button class="shadow border py-2 px-4 w-fit font-bold rounded ml-2 "
-                    @click="$emit('closeModel'),  isMouseClickOnImage = false , isMouseClickOnImageMobile = false">Back</button>
+                    @click="$emit('closeModel'), isMouseClickOnImage = false, isMouseClickOnImageMobile = false">Back</button>
 
-                <div class="grow pt-4" >
+                <div class="grow pt-4">
 
-                    <div class="h-full max-h-[89%] mx-2 relative overflow-hidden p-4" ref="containerMobile"
-                        @dblclick="isMouseClickOnImageMobile ? resetMobileZoom() : zoomMobileImg($event), isMouseClickOnImageMobile = !isMouseClickOnImageMobile">
+                    <div class="h-full max-h-[89%] mx-2 relative overflow-hidden p-4" ref="containerMobile" @click="dblClickImageZoom($event)">
                         <img :src="details.thumbnails[currentIndex].img" v-if="details.thumbnails[currentIndex].img"
-                            class="h-full mx-auto object-contain aspect-square" ref="imgMobile" alt="details.thumbnails[currentIndex].img"
-                            style="transition: transform 0.5s ease;">
+                            class="h-full mx-auto object-contain aspect-square" ref="imgMobile"
+                            alt="details.thumbnails[currentIndex].img" style="transition: transform 0.5s ease;">
 
-                        <video class="h-full w-full py-2" controls
+                        <video class="h-full w-full py-2" controls autoplay
                             v-else-if="details.thumbnails[currentIndex].video && details.thumbnails[currentIndex]">
                             <source :src="details.thumbnails[currentIndex].video" type="video/mp4">
                         </video>
                     </div>
-                    
+
                     <div class="overflow-y-auto w-full px-2 pt-2">
                         <div class="flex h-16 sm:h-20 flex-nowrap">
                             <div v-for="(thumb, ind) in details.thumbnails" :key="index"
-                            class="aspect-square w-16 sm:w-20 p-1 grid place-items-center rounded"
-                            :class="currentIndex == ind ? 'border border-red-500' : ''" @click="currentIndex = ind">
-                            <img :src="thumb.img" v-if="thumb.img && thumb" class="aspect-square object-contain"
-                                alt="thumb.img">
-                            <span v-if="thumb && thumb.video">
-                                <img src="../assets/images/play.png" class="xl:w-16 w-8 aspect-square" alt="Left-btn">
-                            </span>
+                                class="aspect-square w-16 sm:w-20 p-1 grid place-items-center rounded"
+                                :class="currentIndex == ind ? 'border border-red-500' : ''" @click="currentIndex = ind">
+                                <img :src="thumb.img" v-if="thumb.img && thumb" class="aspect-square object-contain"
+                                    alt="thumb.img">
+                                <span v-if="thumb && thumb.video">
+                                    <img src="../assets/images/play.png" class="xl:w-16 w-8 aspect-square" alt="Left-btn">
+                                </span>
+                            </div>
                         </div>
                     </div>
                 </div>
+
             </div>
-
         </div>
-    </div>
 
-</div></template>
+    </div>
+</template>
